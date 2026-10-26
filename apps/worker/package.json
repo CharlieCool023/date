@@ -1,0 +1,34 @@
+{
+  "name": "@velum/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc --noEmit",
+    "start": "tsx src/index.ts",
+    "cli": "tsx src/cli.ts",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@velum/config": "workspace:*",
+    "@velum/core": "workspace:*",
+    "@velum/crypto": "workspace:*",
+    "@velum/db": "workspace:*",
+    "@velum/email": "workspace:*",
+    "@velum/storage": "workspace:*",
+    "dotenv": "^16.6.1",
+    "drizzle-orm": "^0.41.0",
+    "pg-boss": "^10.1.6",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "eslint": "^9.24.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}

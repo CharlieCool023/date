@@ -1,0 +1,26 @@
+{
+  "name": "@velum/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:privacy": "vitest run src/privacy.test.ts"
+  },
+  "dependencies": {
+    "@velum/contracts": "workspace:*",
+    "@velum/crypto": "workspace:*",
+    "@velum/db": "workspace:*",
+    "drizzle-orm": "^0.41.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "eslint": "^9.24.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}

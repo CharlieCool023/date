@@ -1,0 +1,36 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": [
+    "APP_URL",
+    "NEXT_PUBLIC_REALTIME_URL",
+    "DATABASE_URL",
+    "DATABASE_DIRECT_URL",
+    "REDIS_URL",
+    "SESSION_SECRET",
+    "LOCAL_DEV_MASTER_KEY",
+    "BLIND_INDEX_KEY",
+    "MODERATION_PUBLIC_KEY",
+    "STORAGE_ENDPOINT",
+    "STORAGE_REGION",
+    "STORAGE_BUCKET_PHOTOS",
+    "STORAGE_BUCKET_SELFIES",
+    "STORAGE_ACCESS_KEY",
+    "STORAGE_SECRET_KEY",
+    "EMAIL_PROVIDER",
+    "EMAIL_API_KEY",
+    "EMAIL_FROM",
+    "EMAIL_WEBHOOK_SECRET",
+    "ADMIN_EMAILS",
+    "WEBAUTHN_RP_ID",
+    "WEBAUTHN_RP_NAME",
+    "WEBAUTHN_ORIGIN",
+    "SENTRY_DSN"
+  ],
+  "tasks": {
+    "build": { "dependsOn": ["^build"], "outputs": [".next/**", "dist/**"] },
+    "dev": { "cache": false, "persistent": true },
+    "lint": { "dependsOn": ["^lint"] },
+    "typecheck": { "dependsOn": ["^typecheck"] },
+    "test": { "dependsOn": ["^test"] }
+  }
+}
