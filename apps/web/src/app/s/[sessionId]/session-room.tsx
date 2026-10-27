@@ -27,10 +27,12 @@ export default function SessionRoom({ sessionId }: { sessionId: string }) {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [draft, setDraft] = useState("");
   const [notice, setNotice] = useState("");
+  const [holdProgress, setHoldProgress] = useState(0);
   const [reportReason, setReportReason] = useState("harassment");
   const [includeEvidence, setIncludeEvidence] = useState(false);
   const socket = useRef<WebSocket | null>(null);
   const holdTimer = useRef<number | null>(null);
+  const holdProgressTimer = useRef<number | null>(null);
   const held = useRef(false);
 
   useEffect(() => {
@@ -80,6 +82,7 @@ export default function SessionRoom({ sessionId }: { sessionId: string }) {
     connection.addEventListener("error", () => setNotice("The room connection was interrupted."));
     return () => {
       if (holdTimer.current !== null) window.clearTimeout(holdTimer.current);
+      if (holdProgressTimer.current !== null) window.clearInterval(holdProgressTimer.current);
       connection.close();
       socket.current = null;
     };
@@ -95,9 +98,18 @@ export default function SessionRoom({ sessionId }: { sessionId: string }) {
   function startHold() {
     if (state !== "live" || remaining === null || remaining > 180 || held.current) return;
     held.current = true;
+    setHoldProgress(0);
+    const startedAt = Date.now();
+    holdProgressTimer.current = window.setInterval(() => {
+      const progress = Math.min(100, Math.floor(((Date.now() - startedAt) / 3000) * 20) * 5);
+      setHoldProgress(progress);
+    }, 150);
     holdTimer.current = window.setTimeout(() => {
       socket.current?.send(JSON.stringify({ type: "unveil_confirm" }));
       setNotice("Your choice is private until there is a mutual unveil.");
+      setHoldProgress(100);
+      if (holdProgressTimer.current !== null) window.clearInterval(holdProgressTimer.current);
+      holdProgressTimer.current = null;
       holdTimer.current = null;
     }, 3000);
   }
@@ -108,6 +120,11 @@ export default function SessionRoom({ sessionId }: { sessionId: string }) {
       window.clearTimeout(holdTimer.current);
       holdTimer.current = null;
     }
+    if (holdProgressTimer.current !== null) {
+      window.clearInterval(holdProgressTimer.current);
+      holdProgressTimer.current = null;
+    }
+    setHoldProgress(0);
   }
 
   function submitReport() {
@@ -173,28 +190,33 @@ export default function SessionRoom({ sessionId }: { sessionId: string }) {
           </div>
           <p className="note">Keep phone numbers, email addresses, links, and handles private. Your messages are ephemeral.</p>
           {remaining !== null && remaining <= 180 && remaining > 0 && (
-            <button
-              className="button unveil-button"
-              type="button"
-              onPointerDown={(event) => { event.currentTarget.setPointerCapture(event.pointerId); startHold(); }}
-              onPointerUp={endHold}
-              onPointerCancel={endHold}
-              onKeyDown={(event) => {
-                if (event.code === "Space") {
-                  event.preventDefault();
-                  startHold();
-                }
-              }}
-              onKeyUp={(event) => {
-                if (event.code === "Space") {
-                  event.preventDefault();
-                  endHold();
-                }
-              }}
-              onBlur={endHold}
-            >
-              Press and hold for 3 seconds to unveil
-            </button>
+            <div className="unveil-control">
+              <button
+                className="button unveil-button"
+                type="button"
+                onPointerDown={(event) => { if (event.button === 0) { event.currentTarget.setPointerCapture(event.pointerId); startHold(); } }}
+                onPointerUp={endHold}
+                onPointerCancel={endHold}
+                onKeyDown={(event) => {
+                  if (event.code === "Space" || event.code === "Enter") {
+                    event.preventDefault();
+                    if (!event.repeat) startHold();
+                  }
+                }}
+                onKeyUp={(event) => {
+                  if (event.code === "Space" || event.code === "Enter") {
+                    event.preventDefault();
+                    endHold();
+                  }
+                }}
+                onBlur={endHold}
+              >
+                Press and hold for 3 seconds to unveil
+              </button>
+              <div className="unveil-track" role="progressbar" aria-label="Private unveil confirmation" aria-valuemin={0} aria-valuemax={100} aria-valuenow={holdProgress} aria-valuetext={`${holdProgress}% of 3 seconds`}>
+                <span style={{ width: `${holdProgress}%` }} />
+              </div>
+            </div>
           )}
           <div className="report-controls">
             <label>Report a safety concern

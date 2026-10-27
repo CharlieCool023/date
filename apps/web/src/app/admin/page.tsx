@@ -1,10 +1,11 @@
 import Link from "next/link";
+import MemberNav from "@/components/member-nav";
 import AdminDashboard from "./admin-dashboard";
 
 export default function AdminPage() {
   return (
     <main className="shell">
-      <header className="topbar"><Link className="wordmark" href="/me">VELUM</Link><Link className="topnote" href="/me">YOUR SPACE</Link></header>
+      <header className="topbar"><Link className="wordmark" href="/me">VELUM</Link><MemberNav admin /></header>
       <section className="member-home">
         <div className="eyebrow">TRUST & SAFETY</div>
         <h1>Review queue.</h1>

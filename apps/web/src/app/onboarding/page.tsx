@@ -1,10 +1,11 @@
 import Link from "next/link";
+import MemberNav from "@/components/member-nav";
 import OnboardingForm from "./onboarding-form";
 
 export default function OnboardingPage() {
   return (
     <main className="shell compact">
-      <header className="topbar"><Link className="wordmark" href="/me">VELUM</Link></header>
+      <header className="topbar"><Link className="wordmark" href="/me">VELUM</Link><MemberNav /></header>
       <section className="invite-card onboarding-card">
         <div className="eyebrow">YOUR PRIVATE SPACE</div>
         <h1>Build a profile<br />that feels like you.</h1>
@@ -15,4 +16,3 @@ export default function OnboardingPage() {
     </main>
   );
 }
-

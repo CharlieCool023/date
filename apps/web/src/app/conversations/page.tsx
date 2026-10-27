@@ -1,10 +1,11 @@
 import Link from "next/link";
+import MemberNav from "@/components/member-nav";
 import ConversationList from "./conversation-list";
 
 export default function ConversationsPage() {
   return (
     <main className="shell">
-      <header className="topbar"><Link className="wordmark" href="/me">VELUM</Link><Link className="topnote" href="/me">YOUR SPACE</Link></header>
+      <header className="topbar"><Link className="wordmark" href="/me">VELUM</Link><MemberNav /></header>
       <section className="member-home">
         <div className="eyebrow">MUTUAL UNVEIL</div>
         <h1>Conversations.</h1>

@@ -49,6 +49,12 @@ h2 { font: 500 22px/1.25 var(--font-display); letter-spacing: -.01em; margin: 0 
 .topnote, footer { color: var(--muted); font-size: 12px; }
 footer { border-top: 1px solid var(--line); padding-top: 18px; }
 footer span:first-child { font-size: 12px; }
+.member-nav { display: flex; align-items: center; justify-content: flex-end; gap: 4px; }
+.member-nav a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 8px; color: var(--muted); font-size: 14px; transition: background .2s var(--ease), color .2s var(--ease); }
+.member-nav a:hover, .member-nav a[aria-current="page"] { color: var(--ink); background: rgba(255,255,255,.045); }
+.member-nav a[aria-current="page"] { box-shadow: inset 0 -1px var(--accent); }
+.home-signin { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; color: var(--muted); font-size: 14px; }
+.home-signin:hover { color: var(--ink); }
 
 /* Hero */
 .hero { width: min(660px, 100%); margin: auto; padding: 78px 0 88px; }
@@ -62,6 +68,15 @@ h1 { font: 500 clamp(44px, 8vw, 84px)/1.04 var(--font-display); letter-spacing: 
 .promise { border-top: 1px solid var(--line); margin-top: 74px; padding-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; color: var(--muted); font-size: 13px; }
 .promise div { display: flex; gap: 12px; align-items: center; }
 .promise-mark { flex: none; width: 14px; height: 1px; background: var(--accent); }
+.how-it-works { width: min(940px, 100%); margin: 0 auto 72px; }
+.how-it-works h2 { font-size: 28px; margin-bottom: 22px; }
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.step-card { min-height: 180px; padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.018); }
+.step-number { color: var(--accent); font: 12px var(--font-utility); letter-spacing: .12em; }
+.step-card h3 { margin: 22px 0 8px; color: var(--ink); font: 500 20px/1.2 var(--font-display); }
+.step-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.privacy-note { width: min(940px, 100%); margin: 0 auto 68px; padding: 18px 20px; border: 1px solid var(--line); border-left: 2px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; color: var(--body); font-size: 14px; line-height: 1.7; }
+.privacy-note strong { color: var(--ink); font-weight: 500; }
 
 /* Buttons */
 .actions, .member-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
@@ -146,7 +161,8 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 .form-section { padding: 30px 0; border-top: 1px solid var(--line); }
 .form-section h2 { margin-bottom: 8px; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; }
-.question { display: grid; gap: 10px; padding: 18px 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 15px; }
+.question { min-width: 0; display: grid; gap: 10px; margin: 0; padding: 18px 0; border: 0; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 15px; }
+.question > legend { padding: 0; color: var(--ink); font-size: 15px; }
 .question .check-row { margin: 0; font-size: 14px; color: var(--muted); }
 .day-options { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
 .day-check { position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 56px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--body); font-size: 14px; cursor: pointer; transition: border-color .2s, background .2s, color .2s; }
@@ -167,9 +183,12 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 .room-message p { margin: 7px 0 0; color: var(--body); line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
 .room-compose { display: flex; gap: 12px; align-items: stretch; margin-top: 18px; }
 .room-compose textarea { min-height: 66px; flex: 1; resize: vertical; }
-.unveil-button { width: 100%; margin-top: 22px; min-height: 56px; color: var(--accent); border: 1px solid rgba(199,169,121,.45); border-radius: var(--radius); background: var(--accent-soft); font: 500 15px var(--font-body); user-select: none; touch-action: none; cursor: pointer; }
+.unveil-control { margin-top: 22px; }
+.unveil-button { width: 100%; min-height: 56px; padding: 14px 18px; color: var(--accent); border: 1px solid rgba(199,169,121,.45); border-radius: var(--radius); background: var(--accent-soft); font: 500 15px var(--font-body); user-select: none; touch-action: none; cursor: pointer; }
 .unveil-button:active { background: rgba(199,169,121,.2); }
-.report-controls { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 14px; align-items: end; border-top: 1px solid var(--line); padding-top: 20px; }
+.unveil-track { width: min(260px, 80%); height: 3px; margin: 10px auto 0; overflow: hidden; border-radius: 4px; background: rgba(199,169,121,.2); }
+.unveil-track span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width .12s linear; }
+.report-controls { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; border-top: 1px solid var(--line); padding-top: 20px; }
 .report-controls label:first-child { display: grid; gap: 7px; color: var(--muted); font-size: 13px; }
 .report-controls select { min-width: 190px; }
 .report-controls .check-row { flex: 1 1 100%; margin: 0; font-size: 13px; }
@@ -190,8 +209,17 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 
 @media (max-width: 620px) {
   .shell { padding: 20px 16px; }
+  .topbar { flex-wrap: wrap; }
+  .topnote { display: none; }
+  .member-nav { order: 3; width: 100%; justify-content: space-between; border-top: 1px solid var(--line); }
+  .member-nav a { padding-inline: 8px; font-size: 13px; }
   .hero { padding: 64px 0; }
   .promise { grid-template-columns: 1fr; gap: 16px; margin-top: 56px; }
+  .how-it-works { margin-bottom: 52px; }
+  .steps { grid-template-columns: 1fr; }
+  .step-card { min-height: 0; }
+  .step-card h3 { margin-top: 14px; }
+  .privacy-note { margin-bottom: 50px; }
   .form-grid { grid-template-columns: 1fr; }
   .room-heading { flex-direction: column; align-items: flex-start; }
   .room-timer { text-align: left; }

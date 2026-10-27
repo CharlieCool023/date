@@ -202,8 +202,8 @@ export default function OnboardingForm() {
 
   return (
     <div className="onboarding-form">
-      <section className="form-section">
-        <h2>01 / Eligibility & consent</h2>
+      <section className="form-section" aria-labelledby="eligibility-heading">
+        <h2 id="eligibility-heading">01 / Eligibility & consent</h2>
         <div className="form-grid">
           <label>Date of birth (used only to verify you are 18+)
             <input type="date" max={currentAge} value={birthDate} onChange={(event) => setBirthDate(event.target.value)} />
@@ -239,8 +239,8 @@ export default function OnboardingForm() {
         </label>
       </section>
 
-      <section className="form-section">
-        <h2>02 / Private photos & verification</h2>
+      <section className="form-section" aria-labelledby="photos-heading">
+        <h2 id="photos-heading">02 / Private photos & verification</h2>
         <label>Choose two to four profile photos
           <input type="file" accept="image/*" multiple onChange={uploadPhotos} disabled={busy} />
         </label>
@@ -252,18 +252,19 @@ export default function OnboardingForm() {
         <p className="note">Reviewed by a moderator and deleted after the decision. You can complete the rest of your profile while the review is pending.</p>
       </section>
 
-      <section className="form-section">
-        <h2>03 / Questions</h2>
+      <section className="form-section" aria-labelledby="questions-heading">
+        <h2 id="questions-heading">03 / Questions</h2>
         <p className="note">Mark at most three answers as “must match”. Your answers are never shown before mutual unveil.</p>
         {questions.map((question) => (
-          <label className="question" key={question.id}>
-            <span>{question.options.prompt ?? question.id}</span>
+          <fieldset className="question" key={question.id}>
+            <legend>{question.options.prompt ?? question.id}</legend>
             {question.kind === "scale" ? (
               <input type="number" min={question.options.minimum ?? 1} max={question.options.maximum ?? 5}
+                aria-label={question.options.prompt ?? question.id}
                 value={answers[question.id]?.replace(/^must:/, "") ?? ""}
                 onChange={(event) => setAnswer(question.id, `${answers[question.id]?.startsWith("must:") ? "must:" : ""}${event.target.value}`)} />
             ) : (
-              <select value={answers[question.id]?.replace(/^must:/, "") ?? ""} onChange={(event) => setAnswer(question.id, `${answers[question.id]?.startsWith("must:") ? "must:" : ""}${event.target.value}`)}>
+              <select aria-label={question.options.prompt ?? question.id} value={answers[question.id]?.replace(/^must:/, "") ?? ""} onChange={(event) => setAnswer(question.id, `${answers[question.id]?.startsWith("must:") ? "must:" : ""}${event.target.value}`)}>
                 <option value="">Choose an answer</option>
                 {(question.options.choices ?? []).map((choice) => <option key={choice} value={choice}>{choice}</option>)}
               </select>
@@ -271,12 +272,12 @@ export default function OnboardingForm() {
             <label className="check-row"><input type="checkbox" checked={answers[question.id]?.startsWith("must:") ?? false}
               onChange={(event) => setAnswer(question.id, `${event.target.checked ? "must:" : ""}${answers[question.id]?.replace(/^must:/, "") ?? ""}`)} />
               <span>Must match</span></label>
-          </label>
+          </fieldset>
         ))}
       </section>
 
-      <section className="form-section">
-        <h2>04 / Weekly availability</h2>
+      <section className="form-section" aria-labelledby="availability-heading">
+        <h2 id="availability-heading">04 / Weekly availability</h2>
         <label>Timezone
           <input value={timezone} onChange={(event) => setTimezone(event.target.value)} />
         </label>
@@ -303,4 +304,3 @@ export default function OnboardingForm() {
     </div>
   );
 }
-
