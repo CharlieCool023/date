@@ -139,15 +139,19 @@ async function checkRateLimit(sessionId: string, userId: string): Promise<boolea
   return perSecond <= 5 && perMinute <= 30;
 }
 
-app.get("/health", async () => ({ status: "ok" }));
+app.get("/health", async () => ({ status: "ok", commit: process.env.RENDER_GIT_COMMIT?.slice(0, 7) }));
 app.get("/ws", { websocket: true }, (socket, request) => {
   let userId: string | null = null;
   let joinedSession: string | null = null;
   const authPromise = authenticatedUser(request.headers.cookie);
+  // TEMPORARY diagnostics for the Render deployment; event names and flags only.
+  app.log.info({ diag: "room_socket_open", hasCookie: Boolean(request.headers.cookie) });
 
   socket.on("message", async (raw) => {
+    app.log.info({ diag: "room_message_received" });
     try {
       userId ??= await authPromise;
+      app.log.info({ diag: "room_cookie_auth_done", authenticated: Boolean(userId) });
       let decoded: unknown;
       try {
         decoded = JSON.parse(raw.toString());
@@ -293,7 +297,8 @@ app.get("/ws", { websocket: true }, (socket, request) => {
     }
   });
 
-  socket.on("close", () => {
+  socket.on("close", (code) => {
+    app.log.info({ diag: "room_socket_closed", code });
     if (joinedSession) {
       const sessionSockets = sockets.get(joinedSession);
       sessionSockets?.delete(socket);
