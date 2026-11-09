@@ -104,7 +104,7 @@ export const chatMessageSchema = z.object({
   body: z.string().trim().min(1).max(4000)
 }).strict();
 export const roomClientEventSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("join"), sessionId: z.string().uuid() }).strict(),
+  z.object({ type: z.literal("join"), sessionId: z.string().uuid(), ticket: z.string().min(20).max(200).optional() }).strict(),
   z.object({ type: z.literal("message"), body: z.string().trim().min(1).max(2000) }).strict(),
   z.object({ type: z.literal("leave") }).strict(),
   z.object({ type: z.literal("unveil_confirm") }).strict(),

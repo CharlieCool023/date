@@ -1,0 +1,51 @@
+# Render Blueprint: one free Web Service running the realtime server and the job worker
+# together (scripts/render-start.mjs). The Next.js web app is deployed on Vercel.
+# Values marked `sync: false` are entered in the Render dashboard; never commit them.
+services:
+  - type: web
+    name: velum-realtime
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: main
+    buildCommand: npx -y pnpm@10.28.2 install --frozen-lockfile
+    startCommand: node scripts/render-start.mjs
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_DIRECT_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: WEBAUTHN_ORIGIN
+        sync: false
+      - key: LOCAL_DEV_MASTER_KEY
+        sync: false
+      - key: BLIND_INDEX_KEY
+        sync: false
+      - key: EMAIL_PROVIDER
+        value: resend
+      - key: EMAIL_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: STORAGE_ENDPOINT
+        sync: false
+      - key: STORAGE_REGION
+        value: eu-west-1
+      - key: STORAGE_BUCKET_PHOTOS
+        value: velum-photos
+      - key: STORAGE_BUCKET_SELFIES
+        value: velum-selfies
+      - key: STORAGE_ACCESS_KEY
+        sync: false
+      - key: STORAGE_SECRET_KEY
+        sync: false
+      - key: MODERATION_PUBLIC_KEY
+        sync: false

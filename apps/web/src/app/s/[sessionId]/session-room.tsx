@@ -42,10 +42,19 @@ export default function SessionRoom({ sessionId }: { sessionId: string }) {
       setNotice("The private room service is not configured.");
       return;
     }
+    let ticket: string | null = null;
+    let closed = false;
     const connection = new WebSocket(url);
     socket.current = connection;
+    const ticketRequest = fetch(`/api/v1/sessions/${sessionId}/ticket`, { method: "POST", cache: "no-store" })
+      .then(async (response) => response.ok ? (await response.json() as { ticket?: string }).ticket ?? null : null)
+      .catch(() => null)
+      .then((value) => { ticket = value; });
     connection.addEventListener("open", () => {
-      connection.send(JSON.stringify({ type: "join", sessionId }));
+      void ticketRequest.then(() => {
+        if (closed || connection.readyState !== WebSocket.OPEN) return;
+        connection.send(JSON.stringify(ticket ? { type: "join", sessionId, ticket } : { type: "join", sessionId }));
+      });
     });
     connection.addEventListener("message", (event: MessageEvent<string>) => {
       try {
@@ -81,6 +90,7 @@ export default function SessionRoom({ sessionId }: { sessionId: string }) {
     });
     connection.addEventListener("error", () => setNotice("The room connection was interrupted."));
     return () => {
+      closed = true;
       if (holdTimer.current !== null) window.clearTimeout(holdTimer.current);
       if (holdProgressTimer.current !== null) window.clearInterval(holdProgressTimer.current);
       connection.close();

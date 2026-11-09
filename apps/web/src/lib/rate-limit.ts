@@ -4,7 +4,7 @@ import { anonymousRateLimitKey } from "./security";
 type RedisGlobal = typeof globalThis & { velumRateRedis?: RedisClientType };
 const globalRedis = globalThis as RedisGlobal;
 
-async function client(): Promise<RedisClientType> {
+export async function redisClient(): Promise<RedisClientType> {
   if (globalRedis.velumRateRedis?.isOpen) return globalRedis.velumRateRedis;
   const url = process.env.REDIS_URL;
   if (!url) throw new Error("REDIS_URL is required for rate limiting");
@@ -18,7 +18,7 @@ async function client(): Promise<RedisClientType> {
 }
 
 export async function allowRequest(request: Request, bucket: string, limit: number, windowSeconds: number): Promise<boolean> {
-  const redis = await client();
+  const redis = await redisClient();
   const key = anonymousRateLimitKey(request, bucket);
   const count = await redis.incr(key);
   if (count === 1) await redis.expire(key, windowSeconds);

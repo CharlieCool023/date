@@ -105,6 +105,19 @@ async function authenticatedUser(cookie: string | undefined): Promise<string | n
   return session?.userId ?? null;
 }
 
+// Cross-origin deployments can't send the web session cookie, so the web app issues a
+// single-use ticket bound to one member and one session. Only its hash is stored.
+async function redeemRoomTicket(ticket: string, sessionId: string): Promise<string | null> {
+  const stored = await redis.getDel(`room-ticket:${hashToken(ticket).toString("hex")}`);
+  if (!stored) return null;
+  try {
+    const value = JSON.parse(stored) as { userId?: unknown; sessionId?: unknown };
+    return value.sessionId === sessionId && typeof value.userId === "string" ? value.userId : null;
+  } catch {
+    return null;
+  }
+}
+
 async function getAlias(sessionId: string, userId: string): Promise<string> {
   const key = `session:${sessionId}:alias:${userId}`;
   const saved = await redis.get(key);
@@ -135,23 +148,28 @@ app.get("/ws", { websocket: true }, (socket, request) => {
   socket.on("message", async (raw) => {
     try {
       userId ??= await authPromise;
-      if (!userId) {
-        socket.close(1008, "Authentication required");
-        return;
-      }
       let decoded: unknown;
       try {
         decoded = JSON.parse(raw.toString());
       } catch {
-        send(socket, { type: "error", code: "INVALID_EVENT", message: "That action could not be processed." });
+        if (!userId) socket.close(1008, "Authentication required");
+        else send(socket, { type: "error", code: "INVALID_EVENT", message: "That action could not be processed." });
         return;
       }
       const parsed = roomClientEventSchema.safeParse(decoded);
       if (!parsed.success) {
-        send(socket, { type: "error", code: "INVALID_EVENT", message: "That action could not be processed." });
+        if (!userId) socket.close(1008, "Authentication required");
+        else send(socket, { type: "error", code: "INVALID_EVENT", message: "That action could not be processed." });
         return;
       }
       const event = parsed.data;
+      if (!userId && event.type === "join" && event.ticket) {
+        userId = await redeemRoomTicket(event.ticket, event.sessionId);
+      }
+      if (!userId) {
+        socket.close(1008, "Authentication required");
+        return;
+      }
       if (event.type === "join") {
         if (joinedSession) return;
         const [session] = await db.select().from(schema.duskSessions)

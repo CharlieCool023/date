@@ -32,8 +32,11 @@ case "${1:-}" in
     docker compose up -d --wait postgres redis storage
     docker compose up storage-buckets >/dev/null
     if [ "$(psql_q "select to_regclass('public.zones') is not null")" != "t" ]; then
-      echo "Applying packages/db/migrations/0001_initial.sql (drizzle-kit migrate cannot: no meta/_journal.json)"
-      docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -q -U velum -d velum < packages/db/migrations/0001_initial.sql
+      # drizzle-kit migrate cannot run these hand-written files (no meta/_journal.json)
+      for migration in packages/db/migrations/*.sql; do
+        echo "Applying $migration"
+        docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -q -U velum -d velum < "$migration"
+      done
     fi
     pnpm db:seed >/dev/null
     echo "infra ready; zones=$(psql_q 'select count(*) from zones')"
