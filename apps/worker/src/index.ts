@@ -394,6 +394,7 @@ async function hardDeleteAccounts() {
       await tx.update(schema.users).set({ invitedBy: null }).where(eq(schema.users.invitedBy, userId));
       await tx.update(schema.verifications).set({ decidedBy: null }).where(eq(schema.verifications.decidedBy, userId));
       await tx.delete(schema.emailOutbox).where(eq(schema.emailOutbox.userId, userId));
+      await tx.delete(schema.authChallenges).where(eq(schema.authChallenges.userId, userId));
       await tx.delete(schema.users).where(eq(schema.users.id, userId));
     });
   }

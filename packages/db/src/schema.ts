@@ -106,7 +106,8 @@ export const authChallenges = pgTable("auth_challenges", {
   challenge: text("challenge").notNull(),
   purpose: text("purpose").notNull(),
   inviteId: uuid("invite_id").references(() => invites.id, { onDelete: "cascade" }),
-  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+  // No foreign key: a registration challenge holds the id the new member will receive.
+  userId: uuid("user_id"),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 });
