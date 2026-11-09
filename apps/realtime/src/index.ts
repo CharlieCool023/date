@@ -32,6 +32,13 @@ function send(socket: WebSocket, payload: unknown) {
   if (socket.readyState === socket.OPEN) socket.send(JSON.stringify(payload));
 }
 
+// Some proxies (Render's included) don't forward a server-initiated close frame, so send the
+// reason as an ordinary message first; the browser then knows immediately.
+function reject(socket: WebSocket, code: "AUTH_REQUIRED" | "SESSION_UNAVAILABLE", message: string) {
+  send(socket, { type: "error", code, message });
+  socket.close(1008, code === "AUTH_REQUIRED" ? "Authentication required" : "Session unavailable");
+}
+
 function broadcastLocal(sessionId: string, payload: unknown) {
   for (const socket of sockets.get(sessionId) ?? []) send(socket, payload);
 }
@@ -144,25 +151,21 @@ app.get("/ws", { websocket: true }, (socket, request) => {
   let userId: string | null = null;
   let joinedSession: string | null = null;
   const authPromise = authenticatedUser(request.headers.cookie);
-  // TEMPORARY diagnostics for the Render deployment; event names and flags only.
-  app.log.info({ diag: "room_socket_open", hasCookie: Boolean(request.headers.cookie) });
 
   socket.on("message", async (raw) => {
-    app.log.info({ diag: "room_message_received" });
     try {
       userId ??= await authPromise;
-      app.log.info({ diag: "room_cookie_auth_done", authenticated: Boolean(userId) });
       let decoded: unknown;
       try {
         decoded = JSON.parse(raw.toString());
       } catch {
-        if (!userId) socket.close(1008, "Authentication required");
+        if (!userId) reject(socket, "AUTH_REQUIRED", "Your room pass expired. Reload the page to rejoin.");
         else send(socket, { type: "error", code: "INVALID_EVENT", message: "That action could not be processed." });
         return;
       }
       const parsed = roomClientEventSchema.safeParse(decoded);
       if (!parsed.success) {
-        if (!userId) socket.close(1008, "Authentication required");
+        if (!userId) reject(socket, "AUTH_REQUIRED", "Your room pass expired. Reload the page to rejoin.");
         else send(socket, { type: "error", code: "INVALID_EVENT", message: "That action could not be processed." });
         return;
       }
@@ -171,7 +174,7 @@ app.get("/ws", { websocket: true }, (socket, request) => {
         userId = await redeemRoomTicket(event.ticket, event.sessionId);
       }
       if (!userId) {
-        socket.close(1008, "Authentication required");
+        reject(socket, "AUTH_REQUIRED", "Your room pass expired. Reload the page to rejoin.");
         return;
       }
       if (event.type === "join") {
@@ -180,7 +183,7 @@ app.get("/ws", { websocket: true }, (socket, request) => {
           .where(eq(schema.duskSessions.id, event.sessionId)).limit(1);
         if (!session || (session.userA !== userId && session.userB !== userId)
           || !["confirmed", "lobby", "live"].includes(session.status)) {
-          socket.close(1008, "Session unavailable");
+          reject(socket, "SESSION_UNAVAILABLE", "This session is no longer available.");
           return;
         }
         if (session.status !== "live") await joinSessionForUser(session.id, userId);
@@ -297,8 +300,7 @@ app.get("/ws", { websocket: true }, (socket, request) => {
     }
   });
 
-  socket.on("close", (code) => {
-    app.log.info({ diag: "room_socket_closed", code });
+  socket.on("close", () => {
     if (joinedSession) {
       const sessionSockets = sockets.get(joinedSession);
       sessionSockets?.delete(socket);
