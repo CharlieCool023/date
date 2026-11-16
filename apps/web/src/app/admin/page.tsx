@@ -10,6 +10,7 @@ export default function AdminPage() {
         <div className="eyebrow">TRUST & SAFETY</div>
         <h1>Review queue.</h1>
         <p className="lede">Handle sensitive member material only for a specific review decision. Access is audited.</p>
+        <p><Link className="text-button" href="/admin/team">Manage team access →</Link></p>
         <AdminDashboard />
       </section>
       <footer><span>VELUM</span><span>Private by design. Human by choice.</span></footer>

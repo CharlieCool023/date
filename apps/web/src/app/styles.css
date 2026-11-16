@@ -168,6 +168,12 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 .session-item p { margin: 8px 0 4px; color: var(--ink); }
 .session-item small { color: var(--muted); font-size: 13px; }
 .member-settings .member-actions { margin-top: 16px; align-items: center; }
+.team-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.team-row > div { display: grid; gap: 4px; min-width: 0; }
+.team-row strong { font-size: 14px; font-weight: 500; }
+.team-row small { color: var(--muted); font-size: 12px; }
+.team-role { display: grid; gap: 4px; color: var(--muted); font-size: 12px; }
+.team-role select { min-height: 40px; padding: 6px 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--raised); color: var(--ink); font: inherit; }
 
 /* Onboarding */
 .onboarding-form { margin-top: 36px; }
