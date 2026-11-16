@@ -57,7 +57,20 @@ footer span:first-child { font-size: 12px; }
 .home-signin:hover { color: var(--ink); }
 
 /* Hero */
-.hero { width: min(660px, 100%); margin: auto; padding: 78px 0 88px; }
+.hero { position: relative; isolation: isolate; width: min(1040px, 100%); min-height: 560px; margin: auto; padding: 80px 0 88px; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 30px; }
+.hero-copy { position: relative; z-index: 1; }
+.hero-art { position: relative; min-height: 390px; display: grid; place-items: center; overflow: hidden; }
+.art-orbit { position: absolute; aspect-ratio: 1; border: 1px solid rgba(199,169,121,.18); border-radius: 50%; }
+.art-orbit-outer { width: min(360px, 86vw); box-shadow: 0 0 80px rgba(199,169,121,.045), inset 0 0 80px rgba(199,169,121,.035); }
+.art-orbit-inner { width: min(250px, 60vw); border-style: dashed; border-color: rgba(199,169,121,.22); animation: orbit 48s linear infinite; }
+.art-glow { position: absolute; width: 190px; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(199,169,121,.25), rgba(199,169,121,.04) 48%, transparent 72%); filter: blur(8px); }
+.art-core { position: relative; width: 112px; aspect-ratio: 1; display: grid; place-items: center; border: 1px solid rgba(223,198,155,.48); border-radius: 50%; background: radial-gradient(circle at 35% 28%, #423a2f, #191817 72%); box-shadow: 0 0 65px rgba(199,169,121,.16), inset 0 0 26px rgba(255,255,255,.06); }
+.art-core span { color: #e8d6b6; font: 500 52px/1 var(--font-display); }
+.art-point { position: absolute; width: 8px; aspect-ratio: 1; border-radius: 50%; background: var(--accent); box-shadow: 0 0 18px rgba(199,169,121,.8); }
+.art-point-one { top: 20%; right: 28%; }
+.art-point-two { bottom: 23%; left: 24%; width: 5px; }
+.art-caption { position: absolute; bottom: 7%; color: var(--faint); font: 10px var(--font-utility); letter-spacing: .2em; }
+@keyframes orbit { to { transform: rotate(360deg); } }
 .eyebrow { color: var(--accent); font-size: 12px; display: flex; align-items: center; gap: 12px; }
 .signal { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px rgba(199,169,121,.85); }
 h1 { font: 500 clamp(44px, 8vw, 84px)/1.04 var(--font-display); letter-spacing: -.04em; margin: 30px 0 24px; text-wrap: balance; }
@@ -65,7 +78,7 @@ h1 { font: 500 clamp(44px, 8vw, 84px)/1.04 var(--font-display); letter-spacing: 
 .note { color: var(--muted); font-size: 14px; line-height: 1.7; }
 .notice { color: var(--body); font-size: 14px; line-height: 1.6; padding: 12px 14px; border-left: 2px solid var(--accent); background: var(--accent-soft); }
 .room-empty { color: var(--muted); font-size: 14px; line-height: 1.6; }
-.promise { border-top: 1px solid var(--line); margin-top: 74px; padding-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; color: var(--muted); font-size: 13px; }
+.promise { width: min(940px, 100%); border-top: 1px solid var(--line); margin: 0 auto 76px; padding-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; color: var(--muted); font-size: 13px; }
 .promise div { display: flex; gap: 12px; align-items: center; }
 .promise-mark { flex: none; width: 14px; height: 1px; background: var(--accent); }
 .how-it-works { width: min(940px, 100%); margin: 0 auto 72px; }
@@ -231,11 +244,17 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 .viewer-strip { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
 .viewer .member-actions { margin-top: 0; justify-content: flex-end; }
 @media (max-width: 620px) {
+  .hero { min-height: unset; padding: 58px 0 22px; grid-template-columns: 1fr; gap: 0; }
+  .hero-art { min-height: 280px; margin-top: 10px; }
+  .art-orbit-outer { width: 260px; }
+  .art-orbit-inner { width: 190px; }
+  .promise { margin-bottom: 58px; grid-template-columns: 1fr; gap: 14px; }
+  .steps { grid-template-columns: 1fr; }
+  .step-card { min-height: unset; }
   .viewer { padding: 0; }
   .viewer-panel { border-radius: 0; height: 100%; align-content: start; }
   .viewer-nav { width: 36px; height: 36px; }
 }
-
 /* Invitations */
 .invite-list { list-style: none; margin: 18px 0 0; padding: 0; border-top: 1px solid var(--line); }
 .invite-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; min-height: 56px; border-bottom: 1px solid var(--line); font-size: 15px; }

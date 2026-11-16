@@ -23,7 +23,7 @@ The web app and the realtime server run on different sites, so the browser does 
 
 Set production values in each provider's secret environment-variable settings, never in the repository:
 
-- `APP_URL` and `WEBAUTHN_ORIGIN` are the web app's origin, on both Vercel and Render. `WEBAUTHN_RP_ID` is its hostname only.
+- The production web domain is `https://velum.chitechnologies.name.ng`. Set `APP_URL` and `WEBAUTHN_ORIGIN` to that origin on Vercel and Render, and set `WEBAUTHN_RP_ID` to `velum.chitechnologies.name.ng` on both. Add the domain to the Vercel project and configure its DNS records with your domain provider.
 - `NEXT_PUBLIC_REALTIME_URL` is `wss://<render-host>/ws`. It is inlined at build time, so redeploy the web app after changing it.
 - `LOCAL_DEV_MASTER_KEY` (the encryption key) and `BLIND_INDEX_KEY` must be identical on Vercel and Render. Losing them makes stored emails and evidence unreadable.
 - **Supabase database:** the direct `db.<ref>.supabase.co` host is IPv6-only, so use the pooler. On Vercel, `DATABASE_URL` is the transaction pooler (port 6543); the client disables prepared statements for it. On Render, both `DATABASE_URL` and `DATABASE_DIRECT_URL` are the session pooler (port 5432), which pg-boss requires.

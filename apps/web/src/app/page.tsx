@@ -9,11 +9,22 @@ export default function HomePage() {
         <Link className="home-signin" href="/signin">Already a member? Sign in</Link>
       </header>
       <section className="hero">
-        <div className="eyebrow"><span className="signal" aria-hidden="true" /> INVITATION ONLY</div>
-        <h1>Meet the mind<br />before the image.</h1>
-        <p className="lede">A private space for intentional connection. Begin with a conversation; choose together what comes next.</p>
-        <div className="actions">
-          <Link className="button primary" href="/invite">Open an invitation <span aria-hidden="true">↗</span></Link>
+        <div className="hero-copy">
+          <div className="eyebrow"><span className="signal" aria-hidden="true" /> INVITATION ONLY</div>
+          <h1>Meet the mind<br />before the image.</h1>
+          <p className="lede">A private space for intentional connection. Begin with a conversation; choose together what comes next.</p>
+          <div className="actions">
+            <Link className="button primary" href="/invite">Open an invitation <span aria-hidden="true">↗</span></Link>
+          </div>
+        </div>
+        <div className="hero-art" aria-hidden="true">
+          <div className="art-orbit art-orbit-outer" />
+          <div className="art-orbit art-orbit-inner" />
+          <div className="art-glow" />
+          <div className="art-core"><span>V</span></div>
+          <span className="art-point art-point-one" />
+          <span className="art-point art-point-two" />
+          <span className="art-caption">CONNECTION, WITHOUT THE NOISE</span>
         </div>
         <div className="promise">
           <div><span className="promise-mark" aria-hidden="true" /><span>Anonymous first</span></div>
