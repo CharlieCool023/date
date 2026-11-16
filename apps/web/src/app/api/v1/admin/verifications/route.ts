@@ -14,7 +14,8 @@ export async function GET(request: Request) {
       selfieKey: schema.verifications.selfieKey,
       createdAt: schema.verifications.createdAt
     }).from(schema.verifications).where(eq(schema.verifications.status, "pending"));
-    await db.insert(schema.auditLog).values(queue.map((item) => ({
+    // values([]) throws in drizzle, so only write audit rows when there is something to audit.
+    if (queue.length > 0) await db.insert(schema.auditLog).values(queue.map((item) => ({
       actorId: actor.userId,
       action: "admin.verification_queue.viewed",
       target: item.id,

@@ -27,7 +27,13 @@ export async function createInvites(
         .where(eq(schema.users.id, options.inviterId))
         .for("update");
       inviter = row;
-      if (!inviter || inviter.status !== "active" || (inviter.role !== "admin" && inviter.role !== "member")) {
+      // Founders and admins run the community before their own profile is live, so they
+      // may invite at any status short of suspended or deleted. Members must be active.
+      const canInvite = inviter
+        && (inviter.role === "admin"
+          ? inviter.status !== "suspended" && inviter.status !== "deleted"
+          : inviter.role === "member" && inviter.status === "active");
+      if (!inviter || !canInvite) {
         throw new InvitePermissionError();
       }
       if (inviter.role !== "admin" && inviter.invitesRemaining < emails.length) {

@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     emailCiphertext: schema.invites.emailCiphertext
   }).from(schema.invites);
   const showEmail = new URL(request.url).searchParams.get("includeEmail") === "true";
-  if (showEmail) {
+  if (showEmail && all.length > 0) {
     await db.insert(schema.auditLog).values(all.map((invite) => ({
       actorId: userId,
       action: "admin.invite_email.viewed",

@@ -2,6 +2,14 @@
 
 import { useEffect, useState } from "react";
 
+const statusLabels: Record<string, string> = {
+  sent: "Sent",
+  opened: "Opened",
+  redeemed: "Joined",
+  expired: "Expired",
+  revoked: "Revoked"
+};
+
 export default function InviteManager() {
   const [email, setEmail] = useState("");
   const [invites, setInvites] = useState<Array<{ id: string; status: string; expiresAt: string; email?: string }>>([]);
@@ -47,16 +55,22 @@ export default function InviteManager() {
         <button className="button primary" type="button" disabled={busy || !email} aria-busy={busy} onClick={send}>{busy ? "Queueing…" : "Send invitation"}</button>
       </div>
       <p className="note" role="status">{message}</p>
-      <div className="admin-table">
-        {invites.map((invite) => (
-          <div className="admin-row" key={invite.id}>
-            <span>{invite.email ?? invite.id.slice(0, 8)}</span>
-            <span>{invite.status}</span>
-            <span>Expires {new Date(invite.expiresAt).toLocaleDateString()}</span>
-          </div>
-        ))}
-        {invites.length === 0 && <p className="note">No invitations yet.</p>}
-      </div>
+      <ul className="invite-list">
+        {invites.map((invite) => {
+          const expired = invite.status !== "redeemed" && new Date(invite.expiresAt) < new Date();
+          const label = expired ? "Expired" : statusLabels[invite.status] ?? invite.status;
+          return (
+            <li className="invite-row" key={invite.id}>
+              <span className="invite-who">{invite.email ?? `Invitation ${invite.id.slice(0, 4).toUpperCase()}`}</span>
+              <span className={`invite-status is-${expired ? "expired" : invite.status}`}>{label}</span>
+              <span className="invite-date">
+                {invite.status === "redeemed" ? "Joined" : `Expires ${new Date(invite.expiresAt).toLocaleDateString()}`}
+              </span>
+            </li>
+          );
+        })}
+        {invites.length === 0 && <li className="note">No invitations yet.</li>}
+      </ul>
     </>
   );
 }

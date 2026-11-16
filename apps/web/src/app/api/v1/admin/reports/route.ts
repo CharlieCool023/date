@@ -15,7 +15,8 @@ export async function GET(request: Request) {
     createdAt: schema.reports.createdAt
   }).from(schema.reports).where(eq(schema.reports.status, "open"))
     .orderBy(asc(schema.reports.createdAt));
-  await db.insert(schema.auditLog).values(reports.map((report) => ({
+  // values([]) throws in drizzle, so only write audit rows when there is something to audit.
+  if (reports.length > 0) await db.insert(schema.auditLog).values(reports.map((report) => ({
     actorId: actor.userId,
     action: "admin.reports.viewed",
     target: report.id,

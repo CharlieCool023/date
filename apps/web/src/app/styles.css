@@ -207,6 +207,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 .admin-review .member-actions { margin-top: 4px; }
 .admin-photos { display: flex; gap: 14px; flex-wrap: wrap; }
 
+/* Invitations */
+.invite-list { list-style: none; margin: 18px 0 0; padding: 0; border-top: 1px solid var(--line); }
+.invite-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; min-height: 56px; border-bottom: 1px solid var(--line); font-size: 15px; }
+.invite-who { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.invite-status { padding: 4px 10px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--muted); font-size: 13px; }
+.invite-status.is-redeemed { border-color: transparent; background: rgba(156, 199, 154, .12); color: var(--success); }
+.invite-status.is-sent, .invite-status.is-opened { border-color: rgba(199, 169, 121, .45); color: var(--accent); }
+.invite-date { color: var(--muted); font-size: 13px; }
+
 /* Onboarding wizard */
 .notice.is-error { border-left-color: var(--danger); background: rgba(232, 150, 138, .08); color: var(--ink); }
 .stepper ol { list-style: none; margin: 0 0 28px; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }

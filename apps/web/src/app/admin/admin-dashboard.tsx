@@ -38,12 +38,15 @@ export default function AdminDashboard() {
       setLoaded(true);
       return;
     }
-    if (!verificationResponse.ok || !reportResponse.ok) throw new Error("Review queues are temporarily unavailable.");
-    const verificationData = await verificationResponse.json() as { verifications: Verification[] };
-    const reportData = await reportResponse.json() as { reports: Report[] };
-    setVerifications(verificationData.verifications);
-    setReports(reportData.reports);
-    setNotice("");
+    // Each queue stands alone: a failure in one must not hide the other.
+    const failed: string[] = [];
+    if (verificationResponse.ok) {
+      setVerifications((await verificationResponse.json() as { verifications: Verification[] }).verifications);
+    } else failed.push("verifications");
+    if (reportResponse.ok) {
+      setReports((await reportResponse.json() as { reports: Report[] }).reports);
+    } else failed.push("reports");
+    setNotice(failed.length ? `The ${failed.join(" and ")} queue could not be loaded. Refresh to try again.` : "");
     setLoaded(true);
   }
 
